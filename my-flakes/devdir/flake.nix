@@ -21,6 +21,7 @@
             k3d
             kind
             eksctl
+            cloud-provider-kind
             kubernetes-helm
             kubectl
             rclone

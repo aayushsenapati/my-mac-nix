@@ -48,7 +48,7 @@
       k = "kubectl";
       
       # Nix development
-      nix-dev = "nix develop -c $SHELL";
+      nix-dev = "nix develop ~/development/nix/my-flakes/devdir -c $SHELL";
       
       # Git shortcuts
       gs = "git status";
@@ -90,6 +90,28 @@
       gpush-personal() {
         GIT_SSH_COMMAND='ssh -i ~/.ssh/id_ed25519_github_personal -o IdentitiesOnly=yes' git push "$@"
       }
+
+      # clone using work key
+      gclone-work() {
+        GIT_SSH_COMMAND='ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes' git clone "$@"
+        # Rewrite remote URL to use the github.com-work SSH host alias so that
+        # subsequent fetch/push/pull use the correct key without GIT_SSH_COMMAND.
+        local repo_dir
+        repo_dir=$(basename "''${@: -1}" .git)
+        if [[ -d "$repo_dir/.git" ]]; then
+          local current_url
+          current_url=$(git -C "$repo_dir" remote get-url origin 2>/dev/null)
+          local new_url="''${current_url/git@github.com:/git@github.com-work:}"
+          if [[ "$new_url" != "$current_url" ]]; then
+            git -C "$repo_dir" remote set-url origin "$new_url"
+          fi
+        fi
+      }
+
+      # clone using personal key
+      gclone-personal() {
+        GIT_SSH_COMMAND='ssh -i ~/.ssh/id_ed25519_github_personal -o IdentitiesOnly=yes' git clone "$@"
+      }
       
       # FZF configuration
       export FZF_CTRL_T_OPTS="
@@ -105,7 +127,7 @@
         --header 'Press CTRL-Y to copy command into clipboard'"
       
       # Path additions
-      export PATH=$PATH:/opt/local/bin
+      export PATH=$HOME/.local/bin:$PATH:/opt/local/bin
     '';
   };
   

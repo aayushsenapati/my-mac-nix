@@ -25,6 +25,8 @@
     enable = true;
 
     brews = [
+      "redis"
+      "tcl-tk"
       #"docker"
       #"ollama"
       #"gemini-cli"
@@ -35,8 +37,9 @@
 
     casks = [
       #"visual-studio-code"
+      "vorssaint"
       "arc"
-      "claude-code"
+      #"claude-code"
       #"lm-studio"
       #"void"
       #"firefox"
